@@ -36,6 +36,10 @@ have_header('sys/resource.h')
 case RUBY_PLATFORM
 when /linux/
   $defs << '-DHAVE_LINUX_PROCFS'
+  major,major2,minor = `uname -r`.scan(/\d+/).map{|i| i.to_i}
+  if major == 2 && major2 == 6 && minor < 32
+    $defs << '-DEV_USE_INOTIFY=0'
+  end
 else
   if have_func('sysctlbyname', ['sys/param.h', 'sys/sysctl.h'])
     $defs << '-DHAVE_SYSCTLBYNAME'
